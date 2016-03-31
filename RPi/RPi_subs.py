@@ -10,41 +10,40 @@ RPI_STATUS = "Status/RPi"
 light_sensor_value = 0
 threshold_value = 0
 
+
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
+    print("Connected with result code " + str(rc))
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-#    client.subscribe("$SYS/#")
+    #    client.subscribe("$SYS/#")
     client.subscribe("sensor/temp")
-	
+
     # Arduino Light Sensor and the threshold values.
-    client.subscribe(LIGHT_SENSOR_TOPIC,2)
-    client.subscribe(THRESHOLD_TOPIC,2)
+    client.subscribe(LIGHT_SENSOR_TOPIC, 2)
+    client.subscribe(THRESHOLD_TOPIC, 2)
 
-
-    
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-#    print(msg.topic+" "+str(msg.payload))
+    #    print(msg.topic+" "+str(msg.payload))
 
     print("Topic is:" + msg.topic)
 
     if msg.topic == LIGHT_SENSOR_TOPIC:
-        light_sensor_value = msg.payload     
+        global light_sensor_value
+        light_sensor_value = msg.payload
 
     elif msg.topic == THRESHOLD_TOPIC:
+        global threshold_value
         threshold_value = msg.payload
 
         if light_sensor_value >= threshold_value:
-	    client.publish(LIGHT_STATUS, payload = "TurnOn", qos = 2, retain = True)
-        end
+            client.publish(LIGHT_STATUS, payload="TurnOn", qos=2, retain=True)
 
     else:
         print("Invalid Topic:" + msg.topic)
-    end
 
 
 client = mqtt.Client()
@@ -52,7 +51,7 @@ client.on_connect = on_connect
 client.on_message = on_message
 
 client.connect("10.139.59.228", 1883, 60)
-client.will_set(RPI_STATUS,payload = "offline", qos = 2, retain = True)
+client.will_set(RPI_STATUS, payload="offline", qos=2, retain=True)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
