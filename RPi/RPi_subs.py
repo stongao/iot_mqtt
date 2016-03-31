@@ -10,6 +10,8 @@ RPI_STATUS = "Status/RPi"
 light_sensor_value = 0
 threshold_value = 0
 
+is_led_on = False
+
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -23,6 +25,7 @@ def on_connect(client, userdata, flags, rc):
     # Arduino Light Sensor and the threshold values.
     client.subscribe(LIGHT_SENSOR_TOPIC, 2)
     client.subscribe(THRESHOLD_TOPIC, 2)
+    client.subscribe(LIGHT_STATUS, 2)
 
 
 # The callback for when a PUBLISH message is received from the server.
@@ -39,8 +42,15 @@ def on_message(client, userdata, msg):
         global threshold_value
         threshold_value = msg.payload
 
-        if light_sensor_value >= threshold_value:
+        if int(light_sensor_value) >= int(threshold_value):
             client.publish(LIGHT_STATUS, payload="TurnOn", qos=2, retain=True)
+
+    elif msg.topic == LIGHT_STATUS:
+        global is_led_on
+        if msg.payload == "TurnOn":
+            is_led_on = True
+        elif msg.payload == "TurnOff":
+            is_led_on = False
 
     else:
         print("Invalid Topic:" + msg.topic)
