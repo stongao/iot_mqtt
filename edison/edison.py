@@ -6,7 +6,7 @@ global lightStatus
 global statusArduino
 global statusRaspPi
 
-brokerIP = '127.0.0.1' #mqtt broker IP address (PC1)
+brokerIP = '10.139.59.228' #mqtt broker IP address (PC1)
 brokerPort = 1883 #mqtt broker Port number 
 keepAlive = 60 #keep alive timer
 
@@ -28,30 +28,28 @@ statusRaspPi.write(0)
 
 # The callback for when the client receives a CONNACK response from the server
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
+    print("Connected to Broker with result code "+str(rc))
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe([("LightStatus", 2), ("Status/Arduino", 2), ("Status/RaspPi", 2)])
 
 
    
-
 # The callback for when a SUBSCRIBED message is received from the server.
 def on_message(client, userdata, msg):
     print("Topic: " + msg.topic + " " + "Payload:" + str(msg.payload))
     if msg.topic == 'LightStatus':
-	 global lightStatus
          if msg.payload == 'TurnOn':
 	      lightStatus.write(1)
          else: lightStatus.write(0)
     elif msg.topic == 'Status/Arduino':
-         global statusArduino
+         #global statusArduino
          if msg.payload == 'online':
               statusArduino.write(1)         
 	 else:
               statusArduino.write(0)
     elif msg.topic == 'Status/RaspPi':
-         global statsRaspPi    
+         #global statusRaspPi    
 	 if msg.payload == 'online':
               statusRaspPi.write(1)
          else:
@@ -59,10 +57,7 @@ def on_message(client, userdata, msg):
 
 
 # create Client object and connect to broker
-client = mqtt.Client(client_id="edison", 
-                     clean_session=True, 
-                     userdata=None, 
-                     protocol="MQTTv311")
+client = mqtt.Client() 
 client.on_connect = on_connect
 client.on_message = on_message
 client.connect(brokerIP, brokerPort, keepAlive) #connect to broker as client
