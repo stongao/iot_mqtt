@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import sys
 
-brokerIP = '127.0.0.1' #mqtt broker IP address (PC1)
+brokerIP = '10.139.58.175' #mqtt broker IP address (PC1)
 brokerPort = 1883 #mqtt broker Port number
 keepAlive = 60 #client keep alive time (sec)
 bindAddress = '0.0.0.0' #bind address
@@ -34,7 +34,7 @@ client = mqtt.Client(client_id="edison",
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect(brokerIP, brokerPort, keepAlive, bindAddress) #connect to broker as client
+client.connect(brokerIP, brokerPort, keepAlive) #connect to broker as client
 
 # loop_forever() is a blocking statement holding the main thread
 # Using loop_start()/loop_stop() -> runs a thread in background to call loop()
@@ -49,6 +49,7 @@ while True:
      if oldMessage != latestMessage:
           print "message changed"
           oldMessage = latestMessage 
+          client.publish("example", "helloback", qos=2, retain=False)
 #     print latestMessage
      if latestMessage == "quit":
           print "in quit loop"
