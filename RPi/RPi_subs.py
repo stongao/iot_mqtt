@@ -49,8 +49,6 @@ def on_message(client, userdata, msg):
         threshold_value = msg.payload
         is_value_changed = True
 
-
-
     elif msg.topic == LIGHT_STATUS:
         if msg.payload == "TurnOn":
             is_led_on = True
