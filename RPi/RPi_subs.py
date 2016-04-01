@@ -17,6 +17,8 @@ is_value_changed = True
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
+    client.will_set(RPI_STATUS, payload="offline", qos=2, retain=True)
+    client.publish(RPI_STATUS, payload="online", qos=2, retain=True)
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
@@ -74,7 +76,6 @@ client.on_connect = on_connect
 client.on_message = on_message
 
 client.connect("10.139.59.228", 1883, 60)
-client.will_set(RPI_STATUS, payload="offline", qos=2, retain=True)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
