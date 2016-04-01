@@ -1,11 +1,11 @@
 import paho.mqtt.client as mqtt
 
-LIGHT_SENSOR_TOPIC = "arduino/lightSensor"
-THRESHOLD_TOPIC = "arduino/threshold"
+LIGHT_SENSOR_TOPIC = "lightSensor"
+THRESHOLD_TOPIC = "threshold"
 
-LIGHT_STATUS = "RPi/LightStatus"
+LIGHT_STATUS = "LightStatus"
 
-RPI_STATUS = "Status/RPi"
+RPI_STATUS = "Status/RaspPi"
 
 light_sensor_value = 0
 threshold_value = 0
@@ -20,7 +20,7 @@ def on_connect(client, userdata, flags, rc):
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     #    client.subscribe("$SYS/#")
-    client.subscribe("sensor/temp")
+    # client.subscribe("sensor/temp")
 
     # Arduino Light Sensor and the threshold values.
     client.subscribe(LIGHT_SENSOR_TOPIC, 2)
@@ -32,25 +32,31 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     #    print(msg.topic+" "+str(msg.payload))
 
-    print("Topic is:" + msg.topic)
+    print("Topic is:" + msg.topic + " With Value:" + msg.payload)
+    global is_led_on
+    global light_sensor_value
+    global threshold_value
 
     if msg.topic == LIGHT_SENSOR_TOPIC:
-        global light_sensor_value
         light_sensor_value = msg.payload
 
     elif msg.topic == THRESHOLD_TOPIC:
-        global threshold_value
         threshold_value = msg.payload
 
         if int(light_sensor_value) >= int(threshold_value):
-            client.publish(LIGHT_STATUS, payload="TurnOn", qos=2, retain=True)
+            if not is_led_on:
+                client.publish(LIGHT_STATUS, payload="TurnOn", qos=2, retain=True)
+        else:
+            if is_led_on:
+                client.publish(LIGHT_STATUS, payload="TurnOff", qos=2, retain=True)
 
     elif msg.topic == LIGHT_STATUS:
-        global is_led_on
         if msg.payload == "TurnOn":
             is_led_on = True
         elif msg.payload == "TurnOff":
             is_led_on = False
+
+        print("LED Status:" + str(is_led_on))
 
     else:
         print("Invalid Topic:" + msg.topic)
