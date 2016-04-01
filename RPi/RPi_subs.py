@@ -11,6 +11,7 @@ light_sensor_value = 0
 threshold_value = 0
 
 is_led_on = False
+is_value_changed = True
 
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -36,19 +37,17 @@ def on_message(client, userdata, msg):
     global is_led_on
     global light_sensor_value
     global threshold_value
+    global is_value_changed
 
     if msg.topic == LIGHT_SENSOR_TOPIC:
         light_sensor_value = msg.payload
+        is_value_changed = True
 
     elif msg.topic == THRESHOLD_TOPIC:
         threshold_value = msg.payload
+        is_value_changed = True
 
-        if int(light_sensor_value) >= int(threshold_value):
-            if not is_led_on:
-                client.publish(LIGHT_STATUS, payload="TurnOn", qos=2, retain=True)
-        else:
-            if is_led_on:
-                client.publish(LIGHT_STATUS, payload="TurnOff", qos=2, retain=True)
+
 
     elif msg.topic == LIGHT_STATUS:
         if msg.payload == "TurnOn":
@@ -60,6 +59,14 @@ def on_message(client, userdata, msg):
 
     else:
         print("Invalid Topic:" + msg.topic)
+
+    if is_value_changed:
+        if int(light_sensor_value) >= int(threshold_value):
+            if not is_led_on:
+                client.publish(LIGHT_STATUS, payload="TurnOn", qos=2, retain=True)
+        else:
+            if is_led_on:
+                client.publish(LIGHT_STATUS, payload="TurnOff", qos=2, retain=True)
 
 
 client = mqtt.Client()
