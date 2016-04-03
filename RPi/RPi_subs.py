@@ -63,11 +63,13 @@ def on_message(client, userdata, msg):
         print("Invalid Topic:" + msg.topic)
 
     if is_value_changed:
-        if int(light_sensor_value) >= int(threshold_value):
+        if int(light_sensor_value) <= int(threshold_value):
             if not is_led_on:
+                is_led_on = True
                 client.publish(LIGHT_STATUS, payload="TurnOn", qos=2, retain=True)
         else:
             if is_led_on:
+                is_led_on = False
                 client.publish(LIGHT_STATUS, payload="TurnOff", qos=2, retain=True)
         is_value_changed = False
 
@@ -76,7 +78,7 @@ client.will_set(RPI_STATUS, payload="offline", qos=2, retain=True)
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect("10.139.68.252", 1883, 10)
+client.connect("10.139.68.252", 1883, 5)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
