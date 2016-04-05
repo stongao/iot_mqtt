@@ -1,0 +1,31 @@
+FileName: edison.py
+Team: Group8
+Description: This file will run on the Intel Edison
+This file configures the edison as a client to an MQTT broker at IP = brokerIP
+This client is subscribed to topics (QoS):
+- LightStatus (2)
+- Status/Arduino (2)
+- Status/RaspPi (2)
+
+Depending on values recieved from the broker, it will toggle
+GPIO pins.
+
+To use this file you must install the paho.mqtt python library:
+Found at -> https://pypi.python.org/pypi/paho-mqtt/1.1
+
+For configuring this program to work in your environment:
+1) Ensure that you are connected to the same wifi network as the broker
+2) Enter the IP address of your broker at 'brokerIP'
+3) Enter the port number at 'brokerPort' that your broker will 
+   accept connections at (default:1883)
+4) Ensure GPIO pins are connected correctly
+
+Signal	      |     SparkFun   |     MRAA
+lightstatus   |       14       |      36
+statusArduino |       49       |      47
+statusRaspPi  |       47       |      46
+
+Callbacks:
+on_connect -> When client receives a CONNACK response from broker
+on_message -> When the client receives a message from MQTT broker that it is subscribed to
+
