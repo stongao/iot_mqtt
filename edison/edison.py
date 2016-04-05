@@ -1,12 +1,17 @@
+# File: edison.py
+# Team: Group8
+# Description: This file will run on the intel edison
+#   The edison connects to the broker at IP address 'brokerIP'at port brokerPort
+#   and subscribes to lightStatus, Status/Arduino, Status/RaspPi
+#   depending on recieved values it will Turn On/Off respective LEDs
+
+
 import paho.mqtt.client as mqtt
 import sys
 import mraa
 
-global lightStatus
-global statusArduino
-global statusRaspPi
 
-brokerIP = '10.139.59.228' #mqtt broker IP address (PC1)
+brokerIP = '10.139.68.252' #mqtt broker IP address (PC1)
 brokerPort = 1883 #mqtt broker Port number 
 keepAlive = 60 #keep alive timer
 
@@ -28,7 +33,7 @@ statusRaspPi.write(0)
 
 # The callback for when the client receives a CONNACK response from the server
 def on_connect(client, userdata, flags, rc):
-    print("Connected to Broker with result code "+str(rc))
+    print("Connected to Broker with result code: "+str(rc))
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe([("LightStatus", 2), ("Status/Arduino", 2), ("Status/RaspPi", 2)])
