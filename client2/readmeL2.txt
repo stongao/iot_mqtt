@@ -8,4 +8,4 @@ On linux systems, in the command window enter the following commands to install 
 The following commands need to be executed to run the program.
 1) python client_L2.py
 
-You will also have to change the IP address and port in the connect line as per the broker settings.
+You will also have to change the IP address and port in the line 68 of the code as per the broker settings.
