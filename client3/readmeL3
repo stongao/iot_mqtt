@@ -1,0 +1,11 @@
+This program is for client 3. The client is subscribed to "lightSensor", threshold", "LightStatus", "Status/Arduino", and "Status/RaspPi" topics.
+
+This programs logs all the messages sent by broker on these topics alongwith the timestamp.
+
+
+Command to run this program:
+python client_L3.py
+
+*Note: You need to set the correct ip address for the borker in line number 29, 
+client.connect("10.139.68.252", 1883, 60) before executing the program
+
