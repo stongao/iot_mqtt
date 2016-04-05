@@ -2,6 +2,7 @@ import paho.mqtt.client as mqtt
 import serial
 import sys
 import os
+import time
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -11,21 +12,21 @@ def on_connect(client, userdata, flags, rc):
  # reconnect then subscriptions will be renewed.
  	client.subscribe("lightSensor", 2)
 	client.subscribe("threshold", 2)
-	client.subscribe("lightStatus", 2)
-	client.subscribe("Status.Arduino", 2)
-	client.subscribe("Status.RaspPi", 2)
+	client.subscribe("LightStatus", 2)
+	client.subscribe("Status/Arduino", 2)
+	client.subscribe("Status/RaspPi", 2)
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-	
-	print(msg.topic+" "+str(msg.payload))
+	print "Timestamp: ", time.time(), "  ", msg.topic, " " , str(msg.payload)
+        #print "Above message recevied at :  ", time.time()
 
 client = mqtt.Client()
 
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect("10.139.59.228", 1883, 60)
+client.connect("10.139.68.252", 1883, 60)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
