@@ -4,7 +4,7 @@ from datetime import datetime
 import socket
 
 TCP_IP = '0.0.0.0'
-TCP_PORT = 6012
+TCP_PORT = 6015
 BUFFER_SIZE = 1
 
 def string_to_bits(string_data):
@@ -34,7 +34,7 @@ except:
     print 'Socket Connection could not be setup'
 
 GPIO.output(7,0)
-time.sleep(8)
+time.sleep(4)
 
 f = open('test.txt', 'r')
 #while True:
